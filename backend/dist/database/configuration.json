@@ -1,0 +1,29 @@
+{
+    "polling_frequency": 5,
+    "score": {
+        "min": 0,
+        "max": 1000
+    },
+    "clients": [
+        {
+            "id": 1,
+            "token": "A1B2C3D4E5F6G7H8"
+        },
+        {
+            "id": 2,
+            "token": "I9J8K7L6M5N4O3P2"
+        },
+        {
+            "id": 3,
+            "token": "Q1R2S3T4U5V6W7X8"
+        },
+        {
+            "id": 4,
+            "token": "Y9Z8A7B6C5D4E3F2"
+        },
+        {
+            "id": 5,
+            "token": "G1H2I3J4K5L6M7N8"
+        }
+    ]
+}

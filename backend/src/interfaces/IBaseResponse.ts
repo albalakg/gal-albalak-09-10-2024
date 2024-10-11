@@ -1,0 +1,3 @@
+interface IBaseResponse {
+  message: string;
+}
