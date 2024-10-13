@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import MessagesEnum from "../enums/MessagesEnum.js";
+import { MessagesEnum, ErrorCodes } from "../enums/MessagesEnum.js";
 import RoutesEnum from "../enums/RoutesEnum.js";
 import ConfigurationModel from "../database/Configuration.js";
 
@@ -11,11 +11,21 @@ router.post(
   (req: Request, res: Response<IConfigurationResponse>) => {
     
     const config = ConfigurationModel.getConfiguration();
+    if(!config) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        message: MessagesEnum.GET_CONFIGURATION_ERROR,
+        error_code: ErrorCodes.CONFIGURATION,
+        data: null
+      });
+      return;
+    }
 
     res.status(StatusCodes.OK).json({
       message: MessagesEnum.GET_CONFIGURATION_SUCCESS,
-      polling_frequency: config.polling_frequency,
-      score: config.score      
+      data: {
+        polling_frequency: config.polling_frequency,
+        score: config.score
+      }      
     });
   }
 );
@@ -28,14 +38,17 @@ router.post(
     if (!ConfigurationModel.isClientExistsById(client_id)) {
       res.status(StatusCodes.UNAUTHORIZED).json({
         message: MessagesEnum.INVALID_CLIENT_ID,
-        client_token: null,
+        error_code: ErrorCodes.LOGIN,
+        data: null
       });
       return;
     }
 
     res.status(StatusCodes.OK).json({
       message: MessagesEnum.LOGIN_SUCCESS,
-      client_token: ConfigurationModel.getClientTokenById(client_id)
+      data: {
+        token: ConfigurationModel.getClientTokenById(client_id)
+      }
     });
   }
 );
@@ -48,14 +61,17 @@ router.get(
     if (!ConfigurationModel.isClientExistsByToken(client_token)) {
       res.status(StatusCodes.UNAUTHORIZED).json({
         message: MessagesEnum.INVALID_CLIENT_TOKEN,
-        score: null,
+        error_code: ErrorCodes.GET_SCORE,
+        data: null
       });
       return;
     }
 
     res.status(StatusCodes.OK).json({
       message: MessagesEnum.GET_SCORE_SUCCESS,
-      score: ConfigurationModel.getRandomScore()
+      data: {
+        score: ConfigurationModel.getRandomScore()
+      }
     });
   }
 );

@@ -9,7 +9,6 @@ interface IClient {
   token: string;
 }
 
-
 interface IConfigurationScore {
   min: number;
   max: number;

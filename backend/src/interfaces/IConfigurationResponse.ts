@@ -1,4 +1,6 @@
 interface IConfigurationResponse extends IBaseResponse {
-  polling_frequency: number;
-  score: IConfigurationScore;
+  data: {
+    polling_frequency: number;
+    score: IConfigurationScore;
+  } | null;
 }

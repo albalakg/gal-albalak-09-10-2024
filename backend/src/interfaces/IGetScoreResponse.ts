@@ -1,3 +1,5 @@
 interface IGetScoreResponse extends IBaseResponse {
-  score: number | null;
+  data: {
+    score: number | null;
+  } | null
 }

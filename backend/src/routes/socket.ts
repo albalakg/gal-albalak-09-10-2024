@@ -2,12 +2,10 @@ import { Server as SocketIOServer, Socket } from 'socket.io';
 import MessagesEnum from '../enums/MessagesEnum.js';
 
 class WebSocketManager {
-  private io: SocketIOServer;
-  private config_modal: IConfigurationModel;
-
-  constructor(io: SocketIOServer, config_modal: IConfigurationModel) {
-    this.io = io;
-    this.config_modal = config_modal;
+  constructor(
+    private io: SocketIOServer, 
+    private config_modal: IConfigurationModel
+  ) {
     this.initializeSocketEvents();
   }
 
