@@ -1,5 +1,6 @@
 import { ScoreType } from "@/helpers/types";
 import { ScoreColorEnum } from "@/helpers/enums";
+import { IClient, IConfigurationResponse, IClientStoreState } from '@/helpers/interfaces'
 
 const ClientStore = {
   namespaced: true,
@@ -7,36 +8,48 @@ const ClientStore = {
   state: {
     configuration: {} as IConfigurationResponse,
     client: {} as IClient,
-    scoresHistory: <ScoreType[]>[],
+    scoresHistory: <number[]>[],
     currentScore: null as null | ScoreType,
-  },
+  } as IClientStoreState,
   
   getters: {
-    getCurrentScore(state: { currentScore: number | null; }): number | null {
+    isLogged(state: IClientStoreState): boolean {
+      return Boolean(state.client.token);
+    },
+
+    getCurrentScore(state: IClientStoreState): number | null {
       return state.currentScore;
     },
 
-    getTotalScores(state: { scoresHistory: string | any[]; }): number {
-      return state.scoresHistory.length;
+    getTotalScores(state: IClientStoreState): number {
+      return state.scoresHistory.reduce((firstArg, secondArg) => firstArg + secondArg, 0) + (state.currentScore ?? 0);
     },
 
-    getPreviousScore(state: { scoresHistory: number[]; }, getters: { getTotalScores: number; }): number {
-      return state.scoresHistory[getters.getTotalScores - 1];
+    getPreviousScore(state: IClientStoreState): number {
+      return state.scoresHistory[state.scoresHistory.length - 1];
     },
 
-    getScoreDisplayColor(state: any, getters: { getCurrentScore: number; getPreviousScore: number; }): string | null {
+    getScoreDisplayColor(state: IClientStoreState, getters: { getCurrentScore: number; getPreviousScore: number; }): string | null {
       if (!getters.getCurrentScore) {
         return null;
       }
 
-      return getters.getCurrentScore > getters.getPreviousScore
+      return (!state.scoresHistory.length || (getters.getCurrentScore > getters.getPreviousScore))
         ? ScoreColorEnum.GREEN
         : ScoreColorEnum.RED;
     },
+
+    getPollingFrequency(state: IClientStoreState): number {
+      return state.configuration.polling_frequency;
+    },
+
+    getClientToken(state: IClientStoreState): string | null {
+      return state.client.token;
+    }
   },
 
   mutations: {
-    SET_CURRENT_SCORE(state: { currentScore: number; scoresHistory: ScoreType[]; }, newScore: ScoreType) {
+    SET_CURRENT_SCORE(state: IClientStoreState, newScore: ScoreType) {
       if (state.currentScore) {
         state.scoresHistory.push(state.currentScore);
       }
@@ -44,17 +57,21 @@ const ClientStore = {
       state.currentScore = newScore;
     },
 
-    SET_CLIENT(state: { client: IClient; }, client: IClient) {
+    CLEAR_SCORE_HISTORY(state: IClientStoreState) {
+      state.scoresHistory = [];
+    },
+
+    SET_CLIENT(state: IClientStoreState, client: IClient) {
       state.client = client;
     },
 
-    SET_CONFIGURATION(state: { configuration: IConfigurationResponse; }, config: IConfigurationResponse) {
+    SET_CONFIGURATION(state: IClientStoreState, config: IConfigurationResponse) {
       state.configuration = config;
     },
   },
 
   actions: {
-    setScore(context: { commit: (arg0: string, arg1: number) => void; }, score: ScoreType) {
+    setScore(context: { commit: (arg0: string, arg1: ScoreType) => void; }, score: ScoreType) {
       context.commit("SET_CURRENT_SCORE", score);
     },
     
@@ -64,6 +81,16 @@ const ClientStore = {
     
     setConfiguration(context: { commit: (arg0: string, config: IConfigurationResponse) => void; }, config: IConfigurationResponse) {
       context.commit("SET_CONFIGURATION", config);
+    },
+    
+    logout(context: { commit: (arg0: string, payload?: IClient | null) => void; }) {
+      context.commit("SET_CLIENT", {
+        id: null,
+        token: null
+      } as IClient);
+
+      context.commit("SET_CURRENT_SCORE", null);
+      context.commit("CLEAR_SCORE_HISTORY");
     },
   },
 

@@ -4,7 +4,7 @@ import { MessagesEnum, ErrorCodes } from "../enums/MessagesEnum.js";
 import RoutesEnum from "../enums/RoutesEnum.js";
 import ConfigurationModel from "../database/Configuration.js";
 const router = Router();
-router.post(RoutesEnum.CONFIGURATION, (req, res) => {
+router.get(RoutesEnum.CONFIGURATION, (req, res) => {
     const config = ConfigurationModel.getConfiguration();
     if (!config) {
         res.status(StatusCodes.BAD_REQUEST).json({
@@ -39,7 +39,7 @@ router.post(RoutesEnum.LOGIN, (req, res) => {
         }
     });
 });
-router.get(RoutesEnum.GET_SCORE, (req, res) => {
+router.post(RoutesEnum.GET_SCORE, (req, res) => {
     const { client_token } = req.body;
     if (!ConfigurationModel.isClientExistsByToken(client_token)) {
         res.status(StatusCodes.UNAUTHORIZED).json({

@@ -1,17 +1,24 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Guard from '@/helpers/guard'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    beforeEnter: Guard.guest,
+    component: () => import('@/views/HomeView.vue')
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('../views/AboutView.vue')
-  }
+    path: '/game',
+    name: 'game',
+    beforeEnter: Guard.user,
+    component: () => import('@/views/GameView.vue')
+  },
+  {
+    path: '/:path(.*)*',
+    name: 'notFound',
+    component: () => import('@/views/HomeView.vue')
+  },
 ]
 
 const router = createRouter({

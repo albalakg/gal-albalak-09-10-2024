@@ -26,7 +26,6 @@ export default new (class ConfigurationModel implements IConfigurationModel {
     return this.config.clients.some((client) => client.token === token);
   }
 
-  // TODO: Bonus - add a param that controller the luck rate of the clients
   public getRandomScore(): number {
     const min = this.getMinScore();
     const max = this.getMaxScore();

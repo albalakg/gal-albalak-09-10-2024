@@ -6,10 +6,9 @@ import ConfigurationModel from "../database/Configuration.js";
 
 const router = Router();
 
-router.post(
+router.get(
   RoutesEnum.CONFIGURATION,
   (req: Request, res: Response<IConfigurationResponse>) => {
-    
     const config = ConfigurationModel.getConfiguration();
     if(!config) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -53,7 +52,7 @@ router.post(
   }
 );
 
-router.get(
+router.post(
   RoutesEnum.GET_SCORE,
   (req: Request<{}, {}, IGetScoreRequest>, res: Response<IGetScoreResponse>) => {
     const { client_token } = req.body;

@@ -1,12 +1,13 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { RoutesEnum, ErrorEnum } from '../helpers/enums'
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { RoutesEnum, ErrorEnum, NotificationTypeEnum } from '../helpers/enums'
 import store from "@/store/index";
+import { ILoginResponse, IGetScoreResponse, IConfigurationResponse } from '@/helpers/interfaces'
 
 class APIManager {
-  private baseURL: string;
-
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+  constructor(
+    baseServerUrl: string
+  ) {
+    axios.defaults.baseURL = baseServerUrl + '/api';
   }
 
 
@@ -20,8 +21,8 @@ class APIManager {
     return await this.post(RoutesEnum.LOGIN, { client_id });
   }
 
-  public async getScore(): Promise<{data: IGetScoreResponse} | null> {
-    return await this.get(RoutesEnum.GET_SCORE);
+  public async getScore(client_token: string): Promise<{data: IGetScoreResponse} | null> {
+    return await this.post(RoutesEnum.GET_SCORE, { client_token });
   }
 
 
@@ -32,10 +33,9 @@ class APIManager {
       const config: AxiosRequestConfig = {
         params,
       };
-      const response: AxiosResponse<T> = await axios.get(`${this.baseURL}${url}`, config);
+      const response: AxiosResponse<T> = await axios.get(`${url}`, config);
       return response.data;
-      // TODO: fix this type
-    } catch (error: any) {
+    } catch (error) {
       this.handleError(error);
       return null;
     }
@@ -43,28 +43,26 @@ class APIManager {
 
   private async post<T>(url: string, data: object = {}): Promise<T | null> {
     try {
-      const response: AxiosResponse<T> = await axios.post(`${this.baseURL}${url}`, data);
+      const response: AxiosResponse<T> = await axios.post(`${url}`, data);
       return response.data;
-      // TODO: fix this type
-    } catch (error: any) {
+    } catch (error) {
       this.handleError(error);
       return null;
     }
   }
 
-  // Error handling method
   private handleError(error: any): void {
-    console.log({ error });
-    
     if (axios.isAxiosError(error)) {
-      store.dispatch("ErrorStore/addError", {
+      store.dispatch('notification/addNotification', {
         message: error.response?.data.message ?? error.message ?? ErrorEnum.UNKNOWN_ERROR_MESSAGE,
-        code: error.response?.data.error_code ?? ErrorEnum.UNKNOWN_ERROR_CODE 
+        type: NotificationTypeEnum.ERROR,
+        error_code: error.response?.data.error_code ?? ErrorEnum.UNKNOWN_ERROR_CODE,
       });
     } else {
-      store.dispatch("ErrorStore/addError", {
-        message: error.response.data.message ?? error.message ?? ErrorEnum.UNKNOWN_ERROR_MESSAGE,
-        code: error.response.data.error_code ?? ErrorEnum.UNKNOWN_ERROR_CODE 
+      store.dispatch('notification/addNotification', {
+        message: (error as Error).message ?? ErrorEnum.UNKNOWN_ERROR_MESSAGE,
+        type: NotificationTypeEnum.ERROR,
+        error_code: ErrorEnum.UNKNOWN_ERROR_CODE,
       });
     }
   }

@@ -1,12 +1,12 @@
 import { createStore } from 'vuex'
 import ClientStore from './modules/ClientStore'
-import ErrorsStore from './modules/ErrorsStore'
+import NotificationStore from './modules/NotificationStore'
 
 // Create Vuex store
 const store = createStore({
   modules: {
     client: ClientStore,
-    errors: ErrorsStore,
+    notification: NotificationStore,
   },
 })
 

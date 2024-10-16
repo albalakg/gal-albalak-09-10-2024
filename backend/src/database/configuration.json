@@ -1,5 +1,5 @@
 {
-    "polling_frequency": 5,
+    "polling_frequency": 5000,
     "score": {
         "min": 0,
         "max": 1000
