@@ -5,7 +5,7 @@ Spinomenal Home Assignment
 
 ### Backend Setup
 1. cd backend && npm install
-2. npm tsc
+2. npx tsc
 3. node .\dist\index.js
 
 ### Default port is 5000
