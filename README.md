@@ -23,3 +23,4 @@ Spinomenal Home Assignment
 1. The app called "Gasino"
 2. The app contains a small game to demonstrate the casino
 3. The game has 4 levels, default is "medium" (can be changed in the GameView.vue under settings.level)
+4. Game Tip: the correct tile is revealed in the console.log, so feel free to take a look
