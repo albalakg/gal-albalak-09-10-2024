@@ -8,7 +8,7 @@ class SocketManager {
 
   constructor(private baseServerUrl: string) {}
 
-  public connectToRoom(data: IClient, fallbackMechanism: () => void): void {
+  public connectToRoom(data: IClient, fallbackMechanism: () => void, cancelFallbackMechanism: () => void): void {
     try {
       if (!data.id || !data.token) {
         return;
@@ -23,6 +23,7 @@ class SocketManager {
       });
 
       this.socket.on("connect", () => {
+        cancelFallbackMechanism();
         this.joinRoom(data);
       });
 

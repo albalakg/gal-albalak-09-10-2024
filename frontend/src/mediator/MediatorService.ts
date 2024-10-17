@@ -27,7 +27,7 @@ class MediatorService implements IMediatorService {
     } as IClient;
 
     store.dispatch("client/setClient", client);
-    this.socketManager.connectToRoom(client, this.fallbackMechanism.bind(this));
+    this.socketManager.connectToRoom(client, this.fallbackMechanism.bind(this), this.cancelFallbackMechanism.bind(this));
 
     store.dispatch("notification/addNotification", {
       message: MessageEnum.LOGIN_MESSAGE,
@@ -37,7 +37,7 @@ class MediatorService implements IMediatorService {
     return true;
   }
 
-  public async fallbackMechanism() {
+  public async fallbackMechanism(): Promise<void> {
     const isResponseValid = await this.getScore();
     if(!isResponseValid) {
       console.warn('Failed to fetch score from fallback mechanism and stopped the fallback');
@@ -49,7 +49,7 @@ class MediatorService implements IMediatorService {
     }, store.getters["client/getPollingFrequency"] ?? this.defaultPollingFrequency);
   }
 
-  public clearFallbackMechanism() {
+  public cancelFallbackMechanism(): void {
     if(this.fallbackMechanismTimeOut) {
       clearTimeout(this.fallbackMechanismTimeOut);
     }
