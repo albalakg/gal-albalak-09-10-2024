@@ -125,7 +125,7 @@ export default defineComponent({
     }
 
     .board-tile-won {
-        background-color: #d1e2be;
+        background-color: #6aad3d;
         border: 1px solid rgb(179, 221, 160);
         box-shadow: 0 0 .3em rgb(119, 185, 93), 0 0 .5em rgb(81, 128, 49) inset, 0 0 1em #fff inset;
         pointer-events: none;
@@ -133,7 +133,7 @@ export default defineComponent({
     }
 
     .board-tile-lost {
-        background-color: #e2bec0;
+        background-color: #cc5a5f;
         border: 1px solid rgb(221, 160, 175);
         box-shadow: 0 0 .3em rgb(185, 93, 101), 0 0 .5em rgb(128, 49, 60) inset, 0 0 1em #fff inset;
         pointer-events: none;
