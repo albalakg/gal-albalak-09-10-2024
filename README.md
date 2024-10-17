@@ -16,3 +16,10 @@ Spinomenal Home Assignment
 
 ### Default port is 8080
 ### App URL: http://localhost:8080/
+
+
+
+### About the App
+1. The app called "Gasino"
+2. The app contains a small game to demonstrate the casino
+3. The game has 4 levels, default is "medium" (can be changed in the GameView.vue under settings.level)
