@@ -109,8 +109,8 @@ const NotificationStore = {
 
     // Can add here more logic to decide if to show the notification or not yet
     // For the example I set 2 rules with an OR condition between them:
-    // 1. there is not active notification at the moment
-    // 2. if there is an active notification with
+    // 1. there is no active notification at the moment
+    // 2. if there is an active notification with an error type and the next one is his info type, it will be replaced
     async canShowNotification(
       context: {
         state: INotificationStoreState;
