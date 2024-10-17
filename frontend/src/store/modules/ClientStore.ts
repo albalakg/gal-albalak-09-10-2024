@@ -97,5 +97,4 @@ const ClientStore = {
   modules: {},
 };
 
-
 export default ClientStore;

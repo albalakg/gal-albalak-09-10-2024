@@ -1,39 +1,68 @@
 <template>
-    <div class="board" :style="`grid-template-columns: repeat(${boardColumns}, 1fr)`">
-        <div class="board-tile" :ref="`board-tile-${index}`" v-for="(item, index) in tiles" :key="index"
-            @click="pickedTile(index)">
+    <transition-group name="shuffleMedium" tag="div" class="board" :class="{disabled: isGameDisabled}"
+        :style="`grid-template-columns: repeat(${boardColumns}, 1fr)`">
+        <div class="board-tile" :ref="`board-tile-${index}`" v-for="(item, index) in tiles" :key="item" @click="pickedTile(index)">
         </div>
-    </div>
+    </transition-group>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { GameStatusEnum, ErrorEnum, MessageEnum, NotificationTypeEnum } from '@/helpers/enums'
+import { IGameSettings } from '@/helpers/interfaces'
 
 export default defineComponent({
     name: 'GameBoard',
-    components: {
-    },
 
     props: {
-        tiles: {
+        totalTiles: {
             type: Number,
             required: true,
         },
 
         settings: {
-            type: Object,
+            type: Object as PropType<IGameSettings>,
             required: true
         }
     },
 
+    data() {
+        return {
+            tiles: [] as number[],
+        };
+    },
+
+    created() {
+        this.generateTiles();
+    },
+
     computed: {
         boardColumns(): number {
-            return Math.sqrt(this.tiles);
+            return Math.sqrt(this.tiles.length);
         },
+
+        isGameDisabled(): boolean {
+            return this.settings.status === GameStatusEnum.PENDING;
+        }
     },
 
     methods: {
+        generateTiles() {
+            for (let index = 1; index <= this.totalTiles; index++) {
+                this.tiles.push(index);
+            }
+        },
+
+        shuffleTiles() {
+            for (let index = this.totalTiles - 1; index > 0; index--) {
+                let randomIndex = Math.floor(Math.random() * (index + 1));
+                let tempTile = this.tiles[index];
+
+                this.tiles[index] = this.tiles[randomIndex];
+                this.tiles[randomIndex] = tempTile;
+            }
+        },
+
         pickedTile(tileNumber: number) {
             if (tileNumber === this.settings.correctTile) {
                 this.$emit('updateGameStatus', GameStatusEnum.WON);
@@ -43,7 +72,6 @@ export default defineComponent({
                 });
                 return;
             }
-
 
             this.$emit('attemptUsed');
             if (this.settings.attemptsUsed === this.settings.totalAttempts) {
@@ -83,10 +111,11 @@ export default defineComponent({
         border: 1px solid plum;
         box-shadow: 0 0 .3em rgb(185, 93, 185), 0 0 1em plum, 0 0 .5em rgb(128, 49, 128) inset, 0 0 1em #fff inset;
         border-radius: 5px;
-        transition: .2s scale linear;
+        transition: transform 0.5s ease;
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 
         &:hover {
-            scale: 1.05;
+            transform: scale(1.05);
         }
     }
 
@@ -110,5 +139,27 @@ export default defineComponent({
         pointer-events: none;
         opacity: .8;
     }
+}
+
+.shuffleSlow-move {
+    transition: transform 2s;
+}
+
+.shuffleMedium-move {
+    transition: transform 1s;
+}
+
+.shuffleFast-move {
+    transition: transform 0.5s;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity .5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>

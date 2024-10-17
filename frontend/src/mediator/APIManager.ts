@@ -10,9 +10,6 @@ class APIManager {
     axios.defaults.baseURL = baseServerUrl + '/api';
   }
 
-
-  /** API ACTIONS **/
-
   public async getConfiguration(): Promise<{data: IConfigurationResponse} | null> {
     return await this.get(RoutesEnum.GET_CONFIGURATION);
   }
@@ -25,8 +22,6 @@ class APIManager {
     return await this.post(RoutesEnum.GET_SCORE, { client_token });
   }
 
-
-  /** Base Methods **/
 
   private async get<T>(url: string, params: object = {}): Promise<T | null> {
     try {

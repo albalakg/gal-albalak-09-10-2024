@@ -23,7 +23,6 @@ class SocketManager {
       });
 
       this.socket.on("connect", () => {
-        console.log(`Client ${data.id} connected to the server.`);
         this.joinRoom(data);
       });
 
@@ -39,11 +38,12 @@ class SocketManager {
     }
   }
 
-  public disconnect(): void {
+  public disconnect(withFallback = true as boolean): void {
     if (this.socket) {
       this.socket.disconnect();
-      this.runFallback();
-      console.log("Client disconnected from the WebSocket server.");
+      if(withFallback) {
+        this.runFallback();
+      }
     }
   }
 
@@ -54,9 +54,7 @@ class SocketManager {
     }
 
     this.socket.emit("join-room", data, (response: any) => {
-      if (response.success) {
-        console.log(`Client ${data.id} successfully joined the room.`);
-      } else {
+      if (!response.success) {
         this.disconnect();
       }
     });

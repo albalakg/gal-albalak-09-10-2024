@@ -2,6 +2,8 @@ import { INotification, INotificationStoreState } from "@/helpers/interfaces";
 import { NotificationRelationMapType } from "@/helpers/types";
 import { MessageEnum, ErrorEnum, NotificationTypeEnum } from "@/helpers/enums";
 
+let showNotificationTimer = undefined as NodeJS.Timer | undefined;
+
 const NotificationStore = {
   namespaced: true,
 
@@ -53,12 +55,10 @@ const NotificationStore = {
       context: {
         commit: (mutation: string, payload: INotification) => void;
         state: INotificationStoreState;
-        dispatch: (action: string, payload?: INotification) => Promise<any>;
+        dispatch: (action: string, payload?: INotification) => Promise<boolean>;
       },
       notification: INotification
     ) {
-      console.log(33, { notification });
-
       if (!(await context.dispatch("canShowNotification", notification))) {
         context.commit("ADD_NOTIFICATION_TO_BACKLOG", notification);
         return;
@@ -74,12 +74,16 @@ const NotificationStore = {
         dispatch: (
           action: string,
           notification?: INotification | null
-        ) => Promise<any>;
+        ) => Promise<boolean>;
       },
       notification: INotification | null
     ) {
       if (!notification && !context.state.notifications.length) {
         return;
+      }
+
+      if(showNotificationTimer) {
+        clearTimeout(showNotificationTimer as NodeJS.Timeout);
       }
 
       context.commit(
@@ -90,7 +94,7 @@ const NotificationStore = {
         context.commit("REMOVE_NOTIFICATION_FROM_BACKLOG");
       }
 
-      setTimeout(async () => {
+      showNotificationTimer = setTimeout(async () => {
         context.commit("SET_CURRENT_NOTIFICATION", null);
         if (
           await context.dispatch(
@@ -113,10 +117,10 @@ const NotificationStore = {
         getters: {
           hasActiveNotification: boolean;
         };
-        dispatch: (action: string, notification: INotification | null) => Promise<any>;
+        dispatch: (action: string, notification: INotification | null) => Promise<boolean>;
       },
       notification: INotification | null
-    ): Promise<any> {
+    ): Promise<boolean> {
       const isValidToInvalid = context.dispatch(
         "isValidNotificationRelatedToCurrentInvalidNotification",
         notification
@@ -131,7 +135,6 @@ const NotificationStore = {
       },
       notification: INotification | null
     ): boolean {
-      console.log(22, { notification });
       if(!notification) {
         return false;
       }

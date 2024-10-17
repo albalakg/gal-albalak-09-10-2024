@@ -1,12 +1,7 @@
 <template>
-    <button 
-        class="neon-button"
-        :class="{
-            disabled: disabled
-        }" 
-        @click="clicked()"
-        :disabled="disabled"   
-    >
+    <button class="neon-button" :class="{
+        disabled
+    }" @click="clicked()" :disabled="disabled">
         {{ text }}
     </button>
 </template>
@@ -53,11 +48,5 @@ export default defineComponent({
     &:hover {
         scale: 1.05;
     }
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 </style>

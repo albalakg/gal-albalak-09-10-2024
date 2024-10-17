@@ -1,15 +1,13 @@
 <template>
-    <button 
-        class="casino-button"
-    >
-        <div class="casino-button-center">
-            <div class="casino-button-inner-center">
-                <span>
-                    {{ text }}
-                </span>
-            </div>
+    <div class="casino-button-base" :class="{ disabled: disabled }">
+        <div class="casino-button-bottom">
         </div>
-    </button>
+        <button class="casino-button" @click="clicked()">
+            <span>
+                {{ text }}
+            </span>
+        </button>
+    </div>
 </template>
 
 <script lang="ts">
@@ -39,49 +37,59 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.casino-button {
-    width: 15vw;
-    height: 15vw;
-    border-radius: 50%;
-    background-color: #0c4d66;
-    border: 1px solid #7db0c4;
-    box-shadow: 0 0 1em #7db0c4, 0 0 .5em #7db0c4, 0 0 1em #0b4258 inset, 0 0 1em #fff inset;
-    padding: 8px;
-    cursor: pointer;
-  
-    .casino-button-center {
-        width: 70%;
-        height: 70%;
-        background: radial-gradient(circle, #ffffff 50%, #8ec2d6);
-        border-radius: 50%;
-        padding: 15%;
-        
-        .casino-button-inner-center {
-            width: 100%;
-            height: 100%;
-            background-color: #bed5df;
-            box-shadow: 0 0 2em #bed5df, 0 0 2em #0008;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .2s scale linear, .2s box-shadow linear;
+.disabled {
+    opacity: .6;
+}
 
-            &:hover {
-                scale: 1.05;
-                box-shadow: 0 0 2em #bed5df, 0 0 .7em .5em #0008;
-            }
+.casino-button-base {
+    width: 100%;
+    height: 100%;
+    background-color: #1c5a83;
+    border-radius: 12px;
+    box-shadow: 0 2px 2px 1px #0a2e4688, inset 0 -2px 2px 1px #b2c4d1aa;
+    border: 1px solid #0a2e46;
+    outline: unset;
+    position: relative;
+
+    .casino-button {
+        width: 94%;
+        left: 3%;
+        height: 80%;
+        position: absolute;
+        z-index: 2;
+        bottom: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 2px 1px #406781aa, inset 0 -3px 2px 1px #5a778a, inset 0 3px 4px 1px #eaeef1;
+        background-color: #b3d0e4;
+        transition: .1s transform linear;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 10em;
+        perspective-origin: 50% 30%;
+
+        &:active {
+            transform: translateY(5px);
+        }
+
+        span {
+            font-size: 1em;
+            transform-style: preserve-3d;
+            transform: rotateX(40deg);
+            color: #fff;
+            text-shadow: 2px 2px 2px #0a2e46, -2px -2px 1px #d1dfe9;
         }
     }
 
-    span { 
-        font-size: 5em;
+    .casino-button-bottom {
+        width: 94%;
+        left: 3%;
+        height: 80%;
+        position: absolute;
+        bottom: 15px;
+        border-radius: 8px;
+        background-color: #4c7591;
+        border-bottom: 3px solid #0a2e46cc;
     }
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 </style>

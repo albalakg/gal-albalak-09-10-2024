@@ -40,7 +40,7 @@ class MediatorService implements IMediatorService {
   public async fallbackMechanism() {
     const isResponseValid = await this.getScore();
     if(!isResponseValid) {
-      console.error('Failed to fetch score from fallback');
+      console.warn('Failed to fetch score from fallback mechanism and stopped the fallback');
       return;
     }
 
@@ -76,7 +76,7 @@ class MediatorService implements IMediatorService {
   }
 
   public logout(): boolean  {
-    this.socketManager.disconnect();
+    this.socketManager.disconnect(false);
     store.dispatch("client/logout");
     
     return true;

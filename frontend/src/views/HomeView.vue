@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home stars-background">
     <div class="title-wrapper">
       <div class="title">
         <h1>
@@ -68,7 +68,6 @@ export default defineComponent({
 
 <style lang="scss">
 .home {
-  background-color: #000;
   height: 100vh;
   overflow: hidden;
   font-size: 100px;
@@ -209,8 +208,8 @@ export default defineComponent({
 
     .title {
       top: 10%;
-      left: 0;
-      width: calc(100% - 0.4em);
+      left: -5%;
+      width: 100%;
 
       h1 {
         font-size: .6em;

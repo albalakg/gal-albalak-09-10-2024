@@ -1,4 +1,5 @@
 import { NotificationType, NotificationRelationMapType, ScoreType } from './types'
+import { GameStatusEnum, GameLevelEnum } from './enums'
 
 // ***** Base Interfaces *****
 interface IBaseResponse {
@@ -35,6 +36,19 @@ export interface IGetScoreResponse extends IBaseResponse {
 export interface IConfigurationScore {
   min: number;
   max: number;
+}
+
+export interface IBoardComponent {
+  shuffleTiles(): void;
+}
+
+export interface IGameSettings {
+  status: GameStatusEnum;
+  level: GameLevelEnum;
+  correctTile: number | null;
+  totalAttempts: number;
+  attemptsUsed: number;
+  gapTimeBetweenGames: number;
 }
 
 export interface IConfigurationResponse extends IBaseResponse {

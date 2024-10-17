@@ -27,6 +27,7 @@ export enum NotificationTypeEnum {
 }
 
 export enum GameStatusEnum {
+  PENDING = 'pending',
   RUNNING = 'running',
   WON = 'won',
   LOST = 'lost',

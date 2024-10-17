@@ -6,13 +6,59 @@
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+  text-align: center;
+}
+
+button,
+input[type="submit"],
+input[type="reset"] {
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+/* removes the default up & down arrows */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .disabled {
   pointer-events: none;
-  opacity: .8;
+  opacity: 0.8;
 }
 
-html {
+html, body {
   overflow: hidden;
+}
+
+.stars-background {
+  background-image: repeating-linear-gradient(
+      48deg,
+      rgb(0, 0, 0) 0px,
+      rgb(0, 0, 0) 27px,
+      transparent 27px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      352deg,
+      rgb(0, 0, 0) 0px,
+      rgb(0, 0, 0) 27px,
+      transparent 27px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      30deg,
+      rgb(0, 0, 0) 0px,
+      rgb(0, 0, 0) 27px,
+      transparent 27px,
+      transparent 30px
+    ),
+    linear-gradient(90deg, rgb(14, 172, 245), plum);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="game">
+  <div class="game stars-background">
     <div class="game-top-bar">
       <div class="game-bar-content">
         <span v-if="score" :class="`game-score-${getScoreDisplayColor}`">
@@ -14,18 +14,23 @@
       <h2 class="game-title">
         Test Your Luck and Choose The Right Tile
       </h2>
-      <GameBoard :tiles="getLevelTiles" :settings="settings" @updateGameStatus="updateGameStatus"
+      <GameBoard ref="board" :totalTiles="getLevelTiles" :settings="settings" @updateGameStatus="updateGameStatus"
         @attemptUsed="attemptUsed" />
     </div>
     <div class="game-bottom-bar">
       <div class="game-bar-content">
-        <div>
+        <div class="logout-button-wrapper">
           <NeonButton text="Logout" @onClick="logout()" />
         </div>
-        <div>
-          <CasinoButton text="Bet" />
+        <div class="logout-button-wrapper-sm">
+          <div>
+            <NeonIcon icon="logout" @onClick="logout()" />
+          </div>
         </div>
-        <div>
+        <div class="casino-button-wrapper">
+          <CasinoButton text="PLAY" @onClick="playGame()" :disabled="isGameLocked" />
+        </div>
+        <div class="total-score-wrapper">
           <span class="game-total-score">
             Total Score: {{ totalScore }}
           </span>
@@ -40,13 +45,16 @@ import { defineComponent } from 'vue';
 import { GameStatusEnum, GameLevelEnum, ErrorEnum, MessageEnum, NotificationTypeEnum } from '@/helpers/enums'
 import GameBoard from '@/components/GameBoard.vue';
 import NeonButton from '@/components/NeonButton.vue';
+import NeonIcon from '@/components/NeonIcon.vue';
 import CasinoButton from '@/components/CasinoButton.vue';
+import { IBoardComponent, IGameSettings } from '@/helpers/interfaces'
 
 export default defineComponent({
   name: 'GameView',
   components: {
     GameBoard,
     NeonButton,
+    NeonIcon,
     CasinoButton,
   },
 
@@ -60,7 +68,7 @@ export default defineComponent({
         master: 100
       } as Record<string, number>,
       settings: {
-        status: GameStatusEnum.RUNNING as GameStatusEnum,
+        status: GameStatusEnum.PENDING as GameStatusEnum,
         // *****
         // ***** Can change here the game level *****
         // ***** easy / medium / hard / master
@@ -70,7 +78,7 @@ export default defineComponent({
         totalAttempts: 3,
         attemptsUsed: 0 as number,
         gapTimeBetweenGames: 3000 as number, // 3 seconds
-      },
+      } as IGameSettings,
     }
   },
 
@@ -103,8 +111,8 @@ export default defineComponent({
       return Math.sqrt(this.getLevelTiles);
     },
 
-    isGameRunning(): boolean {
-      return this.settings.status === GameStatusEnum.RUNNING;
+    isGamePending(): boolean {
+      return this.settings.status === GameStatusEnum.PENDING;
     },
 
     score(): number {
@@ -118,11 +126,20 @@ export default defineComponent({
     totalScore(): string {
       return this.$store.getters['client/getTotalScores'];
     },
+
+    isGameLocked(): boolean {
+      return this.settings.status !== GameStatusEnum.PENDING;
+    },
   },
 
   methods: {
     startGame() {
       this.generateCorrectRandomTile();
+    },
+
+    playGame() {
+      this.settings.status = GameStatusEnum.RUNNING;
+      (this.$refs.board as IBoardComponent).shuffleTiles();
     },
 
     attemptUsed() {
@@ -135,14 +152,14 @@ export default defineComponent({
 
     gameStatusChanged() {
       this.changeTilesBasedOnStatus();
-      if (this.settings.status !== GameStatusEnum.RUNNING) {
+      if ([GameStatusEnum.WON, GameStatusEnum.LOST].includes(this.settings.status)) {
         this.resetGame();
       }
     },
 
     resetGame() {
       setTimeout(() => {
-        this.settings.status = GameStatusEnum.RUNNING;
+        this.settings.status = GameStatusEnum.PENDING;
         this.settings.attemptsUsed = 0;
         this.changeTilesBasedOnStatus();
         this.generateCorrectRandomTile();
@@ -150,7 +167,7 @@ export default defineComponent({
     },
 
     changeTilesBasedOnStatus() {
-      if (this.isGameRunning) {
+      if (this.isGamePending) {
         [GameStatusEnum.WON, GameStatusEnum.LOST, 'disabled'].forEach(gameStatus => {
           document.querySelectorAll('.board-tile').forEach(tile => {
             tile.classList.remove(`board-tile-${gameStatus}`);
@@ -181,7 +198,6 @@ export default defineComponent({
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #000;
 
   .game-top-bar {
     padding: 10px 20px;
@@ -244,9 +260,21 @@ export default defineComponent({
         font-size: 3em;
       }
 
+      .logout-button-wrapper-sm {
+        display: none;
+      }
+
+      .casino-button-wrapper {
+        height: 8vh;
+        width: 14vw;
+      }
+
       .game-total-score {
         font-size: .5em;
         position: absolute;
+        background-color: #fff5;
+        border-radius: 20px;
+        padding: 5px 10px;
       }
     }
   }
@@ -266,17 +294,52 @@ export default defineComponent({
 
   .game {
     .game-top-bar {
-      height: 50px;
+      height: 40px;
+
       .game-bar-content {
         width: 50%;
       }
     }
 
     .game-content {
-      
 
       .game-title {
         font-size: 1.7em;
+      }
+    }
+
+    .game-bottom-bar {
+      padding: 10px 10px;
+
+      .game-bar-content {
+        &>div {
+          min-width: none;
+        }
+
+        .casino-button-wrapper {
+          width: 50vw;
+          height: 17vw;
+        }
+
+        .logout-button-wrapper,
+        .total-score-wrapper {
+          display: none;
+        }
+
+        .logout-button-wrapper-sm {
+          position: absolute;
+          left: -50px;
+          z-index: 10;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transform: rotate(180deg);
+           
+          div {
+            height: 35px;
+            width: 35px;
+          }
+        }
       }
     }
   }

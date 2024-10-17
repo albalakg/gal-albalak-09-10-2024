@@ -50,11 +50,4 @@ export default defineComponent({
     padding: 4% 8%;
     font-size: .4em;
 }
-
-// removes the default up & down arrows
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
 </style>
